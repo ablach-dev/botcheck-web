@@ -71,7 +71,7 @@ async function getAccessToken(
   clientId: string,
   clientSecret: string | undefined,
   fallbackToken: string | undefined
-) {
+): Promise<string> {
   if (clientSecret) {
     if (tokenCache.token && tokenCache.expiresAt - 60_000 > Date.now()) {
       return tokenCache.token;
