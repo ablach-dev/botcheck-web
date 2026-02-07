@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
   const cookie = `bc_last_start=${now}; Max-Age=180; Path=/; HttpOnly; SameSite=Lax${secure}`;
 
   return new Response(
-    JSON.stringify({ ok: true }),
+    JSON.stringify({ ok: true, retryAfter: Math.ceil(WINDOW_MS / 1000) }),
     {
       status: 200,
       headers: {

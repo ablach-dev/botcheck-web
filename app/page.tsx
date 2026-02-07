@@ -27,6 +27,20 @@ type ChatterEntry = {
   count: number;
 };
 
+type ParsedPing = {
+  type: "PING";
+  payload: string;
+};
+
+type ParsedPrivmsg = {
+  type: "PRIVMSG";
+  user: string;
+  userKey: string;
+  text: string;
+};
+
+type ParsedLine = ParsedPing | ParsedPrivmsg;
+
 const cardVariants = {
   hidden: { opacity: 0, y: 12 },
   show: { opacity: 1, y: 0 }
@@ -56,7 +70,7 @@ function unescapeTagValue(value: string) {
     .replace(/\\\\/g, "\\");
 }
 
-function parseChatLine(raw: string) {
+function parseChatLine(raw: string): ParsedLine | null {
   if (raw.startsWith("PING")) {
     return { type: "PING", payload: raw.split(":")[1] ?? "tmi.twitch.tv" };
   }
@@ -68,8 +82,10 @@ function parseChatLine(raw: string) {
     return null;
   }
 
-  const userKey = match[1].toLowerCase();
-  let displayName = match[1];
+  const matchUser = match[1] ?? "unknown";
+  const matchText = match[2] ?? "";
+  const userKey = matchUser.toLowerCase();
+  let displayName = matchUser;
 
   if (raw.startsWith("@")) {
     const spaceIndex = raw.indexOf(" ");
@@ -87,9 +103,9 @@ function parseChatLine(raw: string) {
 
   return {
     type: "PRIVMSG",
-    user: displayName || match[1],
+    user: displayName?.trim() ? displayName : matchUser,
     userKey,
-    text: match[2]
+    text: matchText
   };
 }
 
@@ -212,6 +228,13 @@ export default function Home() {
       if (!response.ok) {
         setError("Unable to start tracking. Please try again.");
         return;
+      }
+
+      const payload = await response.json().catch(() => null);
+      if (payload?.retryAfter && payload.retryAfter > 0) {
+        setCooldownSeconds(payload.retryAfter);
+      } else {
+        setCooldownSeconds(180);
       }
 
       resetStats();

@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const clientId = process.env.TWITCH_CLIENT_ID;
+  const clientId = process.env.TWITCH_CLIENT_ID ?? "";
   const clientSecret = process.env.TWITCH_CLIENT_SECRET;
   const fallbackToken = process.env.TWITCH_ACCESS_TOKEN;
 
