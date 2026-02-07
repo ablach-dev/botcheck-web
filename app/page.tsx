@@ -234,7 +234,7 @@ export default function Home() {
       if (payload?.retryAfter && payload.retryAfter > 0) {
         setCooldownSeconds(payload.retryAfter);
       } else {
-        setCooldownSeconds(60);
+        setCooldownSeconds(120);
       }
 
       resetStats();
