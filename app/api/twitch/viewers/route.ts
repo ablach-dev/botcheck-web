@@ -9,7 +9,7 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 60;
 const rateBuckets = new Map<string, RateBucket>();
 const tokenCache = {
-  token: null as string | null,
+  token: "",
   expiresAt: 0
 };
 
@@ -62,9 +62,9 @@ async function fetchAppAccessToken(clientId: string, clientSecret: string) {
     throw new Error("Invalid token response");
   }
 
-  tokenCache.token = data.access_token;
+  tokenCache.token = data.access_token as string;
   tokenCache.expiresAt = Date.now() + data.expires_in * 1000;
-  return tokenCache.token;
+  return data.access_token as string;
 }
 
 async function getAccessToken(
