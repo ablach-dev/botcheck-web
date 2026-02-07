@@ -583,7 +583,7 @@ export default function Home() {
         <div className="footer-right">
           <a
             className="support-button"
-            href="https://example.com/support"
+            href="https://buymeacoffee.com/blechensen"
             target="_blank"
             rel="noreferrer"
           >
