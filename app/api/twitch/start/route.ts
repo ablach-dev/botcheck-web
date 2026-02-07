@@ -6,9 +6,13 @@ const rateByIp = new Map<string, number>();
 function getClientIp(request: NextRequest) {
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
-    return forwarded.split(",")[0]?.trim() ?? "unknown";
+    const ip = forwarded.split(",")[0]?.trim();
+    return ip || null;
   }
-  return request.headers.get("x-real-ip") ?? "unknown";
+  const real = request.headers.get("x-real-ip");
+  if (real) return real;
+  const ip = (request as { ip?: string | null }).ip;
+  return ip ?? null;
 }
 
 function parseLastStart(value: string | undefined) {
@@ -24,7 +28,7 @@ export async function GET(request: NextRequest) {
   const ip = getClientIp(request);
   const cookieValue = request.cookies.get("bc_last_start")?.value;
 
-  const lastByIp = rateByIp.get(ip) ?? 0;
+  const lastByIp = ip ? rateByIp.get(ip) ?? 0 : 0;
   const lastByCookie = parseLastStart(cookieValue);
   const lastStart = Math.max(lastByIp, lastByCookie);
   const remaining = Math.max(0, WINDOW_MS - (now - lastStart));
@@ -49,7 +53,7 @@ export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
   const cookieValue = request.cookies.get("bc_last_start")?.value;
 
-  const lastByIp = rateByIp.get(ip) ?? 0;
+  const lastByIp = ip ? rateByIp.get(ip) ?? 0 : 0;
   const lastByCookie = parseLastStart(cookieValue);
   const lastStart = Math.max(lastByIp, lastByCookie);
 
@@ -68,7 +72,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  rateByIp.set(ip, now);
+  if (ip) {
+    rateByIp.set(ip, now);
+  }
 
   const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
   const cookie = `bc_last_start=${now}; Max-Age=180; Path=/; HttpOnly; SameSite=Lax${secure}`;
