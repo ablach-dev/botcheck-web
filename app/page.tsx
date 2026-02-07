@@ -20,6 +20,7 @@ type TopChatter = {
 type ViewerResponse = {
   viewers: number;
   live: boolean;
+  displayName?: string | null;
 };
 
 type ChatterEntry = {
@@ -135,6 +136,9 @@ export default function Home() {
   const [peakViewers, setPeakViewers] = useState(0);
   const [isLive, setIsLive] = useState(false);
   const [lastViewerAt, setLastViewerAt] = useState<number | null>(null);
+  const [channelDisplayName, setChannelDisplayName] = useState<string | null>(
+    null
+  );
 
   const [elapsed, setElapsed] = useState(0);
 
@@ -191,6 +195,7 @@ export default function Home() {
     setPeakViewers(0);
     setIsLive(false);
     setLastViewerAt(null);
+    setChannelDisplayName(null);
     setElapsed(0);
     messageCountsRef.current = new Map();
     startTimeRef.current = null;
@@ -396,6 +401,9 @@ export default function Home() {
         setViewerCount(payload.viewers);
         setIsLive(payload.live);
         setLastViewerAt(Date.now());
+        if (payload.displayName) {
+          setChannelDisplayName(payload.displayName);
+        }
 
         setPeakViewers((prev) => Math.max(prev, payload.viewers));
         setError(null);
@@ -520,7 +528,18 @@ export default function Home() {
               {lastViewerAt ? new Date(lastViewerAt).toLocaleTimeString() : "--"}
             </div>
             <div className="status-meta">
-              Channel: {channel ? `#${channel}` : "--"}
+              Channel:{" "}
+              <span
+                className={`status-channel ${
+                  channelDisplayName ? "" : "status-channel-muted"
+                }`}
+              >
+                {channelDisplayName
+                  ? channelDisplayName
+                  : isTracking
+                    ? "Loading..."
+                    : "--"}
+              </span>
             </div>
           </div>
         </motion.div>

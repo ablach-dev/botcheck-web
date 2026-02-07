@@ -124,10 +124,6 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const url = `https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(
-    channel
-  )}`;
-
   let accessToken: string;
   try {
     accessToken = await getAccessToken(clientId, clientSecret, fallbackToken);
@@ -138,24 +134,33 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  let response = await fetch(url, {
-    headers: {
-      "Client-Id": clientId,
-      Authorization: `Bearer ${accessToken}`
-    },
-    cache: "no-store"
-  });
+  const fetchHelix = async (token: string) => {
+    const streamsUrl = `https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(
+      channel
+    )}`;
+    const usersUrl = `https://api.twitch.tv/helix/users?login=${encodeURIComponent(
+      channel
+    )}`;
 
-  if (response.status === 401 && clientSecret) {
+    const headers = {
+      "Client-Id": clientId,
+      Authorization: `Bearer ${token}`
+    };
+
+    const [streamsRes, usersRes] = await Promise.all([
+      fetch(streamsUrl, { headers, cache: "no-store" }),
+      fetch(usersUrl, { headers, cache: "no-store" })
+    ]);
+
+    return { streamsRes, usersRes };
+  };
+
+  let response = await fetchHelix(accessToken);
+
+  if (response.streamsRes.status === 401 && clientSecret) {
     try {
       accessToken = await fetchAppAccessToken(clientId, clientSecret);
-      response = await fetch(url, {
-        headers: {
-          "Client-Id": clientId,
-          Authorization: `Bearer ${accessToken}`
-        },
-        cache: "no-store"
-      });
+      response = await fetchHelix(accessToken);
     } catch (err) {
       return Response.json(
         { error: "Failed to refresh Twitch token" },
@@ -164,16 +169,25 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  if (!response.ok) {
+  if (!response.streamsRes.ok) {
     return Response.json(
       { error: "Twitch API error" },
-      { status: response.status }
+      { status: response.streamsRes.status }
     );
   }
 
-  const data = await response.json();
-  const live = Array.isArray(data.data) && data.data.length > 0;
-  const viewers = live ? data.data[0]?.viewer_count ?? 0 : 0;
+  if (!response.usersRes.ok) {
+    return Response.json(
+      { error: "Twitch API error" },
+      { status: response.usersRes.status }
+    );
+  }
 
-  return Response.json({ viewers, live });
+  const streamsData = await response.streamsRes.json();
+  const usersData = await response.usersRes.json();
+  const live = Array.isArray(streamsData.data) && streamsData.data.length > 0;
+  const viewers = live ? streamsData.data[0]?.viewer_count ?? 0 : 0;
+  const displayName = usersData.data?.[0]?.display_name ?? null;
+
+  return Response.json({ viewers, live, displayName });
 }

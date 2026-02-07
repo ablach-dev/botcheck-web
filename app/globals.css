@@ -227,6 +227,16 @@ body {
   font-size: 0.85rem;
 }
 
+.status-channel {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.status-channel-muted {
+  color: var(--muted);
+  font-weight: 500;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
