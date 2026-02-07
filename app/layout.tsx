@@ -15,8 +15,31 @@ const bebas = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  title: "Blech's Viewbot Check",
-  description: "Live Twitch channel health and chat analytics dashboard."
+  title: "F*ck Botters",
+  description:
+    "Real-time Twitch chat and viewer analytics to spot suspicious activity fast.",
+  keywords: [
+    "Twitch analytics",
+    "viewer bot detection",
+    "chat analytics",
+    "live viewers",
+    "stream health"
+  ],
+  openGraph: {
+    title: "F*ck Botters",
+    description:
+      "Real-time Twitch chat and viewer analytics to spot suspicious activity fast.",
+    type: "website"
+  },
+  twitter: {
+    card: "summary",
+    title: "F*ck Botters",
+    description:
+      "Real-time Twitch chat and viewer analytics to spot suspicious activity fast."
+  },
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }]
+  }
 };
 
 export default function RootLayout({

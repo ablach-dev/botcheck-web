@@ -449,7 +449,7 @@ export default function Home() {
           <div className="control-row">
             <input
               className="input"
-              placeholder="Enter channel name"
+              placeholder="Twitch channel name"
               value={channelInput}
               onChange={(event) => setChannelInput(event.target.value)}
               disabled={isTracking}
