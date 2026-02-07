@@ -382,6 +382,9 @@ body {
 .footer-right {
   display: flex;
   align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .support-button {
@@ -396,6 +399,22 @@ body {
   text-decoration: none;
   font-weight: 600;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.support-button.alt {
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: rgba(12, 18, 28, 0.55);
+}
+
+.support-button.outline-blue {
+  border-color: rgba(114, 166, 255, 0.6);
+  box-shadow: 0 0 0 1px rgba(114, 166, 255, 0.1);
+}
+
+.support-button.outline-blue:hover {
+  box-shadow: 0 10px 24px rgba(114, 166, 255, 0.28);
 }
 
 .support-button:hover {

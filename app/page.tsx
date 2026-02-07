@@ -593,7 +593,15 @@ export default function Home() {
         </div>
         <div className="footer-right">
           <a
-            className="support-button"
+            className="support-button alt"
+            href="https://kicktools.app/chat_stats/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Not affiliated: try Kicktools.app for Kick
+          </a>
+          <a
+            className="support-button outline-blue"
             href="https://buymeacoffee.com/blechensen"
             target="_blank"
             rel="noreferrer"
