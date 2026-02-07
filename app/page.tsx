@@ -476,6 +476,8 @@ export default function Home() {
               value={channelInput}
               onChange={(event) => setChannelInput(event.target.value)}
               disabled={isTracking}
+              autoComplete="off"
+              name="twitch_channel"
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
                   event.preventDefault();
