@@ -443,4 +443,14 @@ body {
   .chat-log {
     max-height: 320px;
   }
+  .footer {
+    justify-content: center;
+    text-align: center;
+  }
+  .footer-left {
+    align-items: center;
+  }
+  .footer-right {
+    justify-content: center;
+  }
 }
