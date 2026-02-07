@@ -99,6 +99,13 @@ body {
   color: var(--muted);
 }
 
+.disclaimer {
+  margin: 10px 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .control-row {
   display: flex;
   gap: 12px;

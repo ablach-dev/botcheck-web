@@ -476,6 +476,14 @@ export default function Home() {
               value={channelInput}
               onChange={(event) => setChannelInput(event.target.value)}
               disabled={isTracking}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  if (!isTracking) {
+                    startTracking();
+                  }
+                }
+              }}
             />
             <button
               className={`button ${isTracking ? "stop" : "start"}`}
@@ -491,6 +499,9 @@ export default function Home() {
                     : "Start Tracking"}
             </button>
           </div>
+          <p className="disclaimer">
+            Rate limits are required to prevent abuse and keep the service free.
+          </p>
           {error ? <p className="error">{error}</p> : null}
         </motion.div>
 
