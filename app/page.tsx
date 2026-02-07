@@ -118,6 +118,40 @@ function formatWait(seconds: number) {
   return `${minutes}m ${remaining}s`;
 }
 
+function lerp(a: number, b: number, t: number) {
+  return Math.round(a + (b - a) * t);
+}
+
+function engagementColor(value: number) {
+  const red = { r: 239, g: 68, b: 68 };
+  const yellow = { r: 245, g: 158, b: 11 };
+  const green = { r: 34, g: 197, b: 94 };
+
+  if (value <= 0) {
+    return `rgb(${red.r}, ${red.g}, ${red.b})`;
+  }
+
+  if (value < 5) {
+    const t = value / 5;
+    return `rgb(${lerp(red.r, yellow.r, t)}, ${lerp(
+      red.g,
+      yellow.g,
+      t
+    )}, ${lerp(red.b, yellow.b, t)})`;
+  }
+
+  if (value < 10) {
+    const t = (value - 5) / 5;
+    return `rgb(${lerp(yellow.r, green.r, t)}, ${lerp(
+      yellow.g,
+      green.g,
+      t
+    )}, ${lerp(yellow.b, green.b, t)})`;
+  }
+
+  return `rgb(${green.r}, ${green.g}, ${green.b})`;
+}
+
 export default function Home() {
   const [channelInput, setChannelInput] = useState("");
   const [channel, setChannel] = useState("");
@@ -179,6 +213,11 @@ export default function Home() {
     if (!viewerCount) return 0;
     return (uniqueChatters / viewerCount) * 100;
   }, [uniqueChatters, viewerCount]);
+
+  const engagementTone = useMemo(
+    () => engagementColor(engagement),
+    [engagement]
+  );
 
   const mpm = useMemo(() => {
     if (!elapsed) return 0;
@@ -458,7 +497,8 @@ export default function Home() {
     {
       label: "Engagement",
       value: `${engagement.toFixed(2)}%`,
-      sub: "Chatters / viewers"
+      sub: "Chatters / viewers",
+      tone: engagementTone
     }
   ];
 
@@ -558,7 +598,12 @@ export default function Home() {
               transition={{ delay: index * 0.04 }}
             >
               <div className="stat-label">{stat.label}</div>
-              <div className="stat-value">{stat.value}</div>
+              <div
+                className="stat-value"
+                style={stat.tone ? { color: stat.tone } : undefined}
+              >
+                {stat.value}
+              </div>
               <div className="stat-sub">{stat.sub}</div>
             </motion.div>
           ))}
