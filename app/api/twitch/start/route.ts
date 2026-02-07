@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 
-const WINDOW_MS = 3 * 60 * 1000;
+const WINDOW_MS = 60 * 1000;
 const rateByIp = new Map<string, number>();
 
 function getClientIp(request: NextRequest) {

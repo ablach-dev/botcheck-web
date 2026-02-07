@@ -234,7 +234,7 @@ export default function Home() {
       if (payload?.retryAfter && payload.retryAfter > 0) {
         setCooldownSeconds(payload.retryAfter);
       } else {
-        setCooldownSeconds(180);
+        setCooldownSeconds(60);
       }
 
       resetStats();
@@ -480,7 +480,7 @@ export default function Home() {
             <button
               className={`button ${isTracking ? "stop" : "start"}`}
               onClick={isTracking ? stopTracking : startTracking}
-              disabled={isStarting || cooldownSeconds > 0}
+              disabled={!isTracking && (isStarting || cooldownSeconds > 0)}
             >
               {isStarting
                 ? "Starting..."
