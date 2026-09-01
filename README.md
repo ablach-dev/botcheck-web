@@ -1,4 +1,4 @@
-# Blech's Viewbot Check (Web)
+# Viewbot Check (Web)
 
 A Next.js dashboard that monitors Twitch chat activity and viewer counts in real time.
 
